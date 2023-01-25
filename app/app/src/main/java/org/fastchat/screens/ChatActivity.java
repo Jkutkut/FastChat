@@ -70,7 +70,6 @@ public class ChatActivity extends AppCompatActivity {
         // Declare elements
         tvChat = findViewById(R.id.tvChat);
         etInputMessage = findViewById(R.id.etInputMessage);
-        getEtInputIp = findViewById(R.id.etInputIp);
         btnSendMsg = findViewById(R.id.btnSendMsg);
 
         btnSendMsg.setOnClickListener(v -> {
