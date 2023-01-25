@@ -16,6 +16,13 @@ const wsServer = new WebSocket.Server({
 });
 
 wsServer.on("connection", (ws) => {
+    console.log("New client connected. Total clients: " + wsServer.clients.size);
+    wsServer.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send("New client connected. Total clients: " + wsServer.clients.size);
+        }
+    });
+    
     ws.on("message", (msg) => {
         wsServer.clients.forEach((client) => {
             if (client.readyState === WebSocket.OPEN) {
@@ -23,7 +30,15 @@ wsServer.on("connection", (ws) => {
             }
         });
     });
-    // ws.on("error", console.error);
+    ws.on("error", console.error);
+    ws.on("close", () => {
+        console.log("Client disconnected. Total clients: " + wsServer.clients.size);
+        wsServer.clients.forEach((client) => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send("Client disconnected. Total clients: " + wsServer.clients.size);
+            }
+        });
+    });
 });
 
 const myServer = app.listen(PORT);
