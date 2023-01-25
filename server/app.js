@@ -16,17 +16,25 @@ const wsServer = new WebSocket.Server({
 });
 
 wsServer.on("connection", (ws) => {
-    console.log("New client connected. Total clients: " + wsServer.clients.size);
+    const names = ['Alpha', 'Bravo', 'Charlie', 'Delta', 'Echo', 'Foxtrot', 'Golf', 'Hotel', 'India', 'Juliet', 'Kilo', 'Lima', 'Mike', 'November', 'Oscar', 'Papa', 'Quebec', 'Romeo', 'Sierra', 'Tango', 'Uniform', 'Victor', 'Whiskey', 'X-ray', 'Yankee', 'Zulu'];
+    const name = names[Math.floor(Math.random() * names.length)];
+    console.log(`${name} connected. Total clients: ${wsServer.clients.size}`);
+    // console.log(ws); // TODO investigate ws object
+
+    console.log(`${name} connected. Total clients: ${wsServer.clients.size}`);
     wsServer.clients.forEach((client) => {
         if (client.readyState === WebSocket.OPEN) {
-            client.send("New client connected. Total clients: " + wsServer.clients.size);
+            client.send(JSON.stringify({user: 'Server', msg: `${name} connected. Total clients: ${wsServer.clients.size}`}));
         }
     });
     
-    ws.on("message", (msg) => {
+    ws.on("message", (msgStream) => {
+        const msg = msgStream.toString();
+        if (msg === "")
+            return;
         wsServer.clients.forEach((client) => {
             if (client.readyState === WebSocket.OPEN) {
-              client.send(msg.toString());
+                client.send(JSON.stringify({user: name, msg}));
             }
         });
     });
@@ -35,7 +43,7 @@ wsServer.on("connection", (ws) => {
         console.log("Client disconnected. Total clients: " + wsServer.clients.size);
         wsServer.clients.forEach((client) => {
             if (client.readyState === WebSocket.OPEN) {
-                client.send("Client disconnected. Total clients: " + wsServer.clients.size);
+                client.send(JSON.stringify({user: 'Server', msg: `${name} disconnected. Total clients: ${wsServer.clients.size}`}));
             }
         });
     });
