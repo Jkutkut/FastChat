@@ -9,4 +9,10 @@
     <color name="white">#FFFFFFFF</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="whatsapp">#D1B76B</color>
+    <!-- <color name="whatsapp">#25D366</color> -->
+    <color name="chat_background">#ECE5DD</color>
+    <color name="chat_broadcast">#DCF8C6</color>
+    <color name="chat_sent">#DCF8C6</color>
+    <color name="chat_message">#393E46</color>
+    <color name="chat_user">#D65A31</color>
 </resources>
