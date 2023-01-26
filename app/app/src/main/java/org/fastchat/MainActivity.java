@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
         btnGoToChatActivity.setOnClickListener(v -> {
 
-            String ip = "10.34.177.202"; // IP WebSocket server
+            String ip = "192.168.1.135"; // IP WebSocket server
             String port = "4242"; // Port WebSocket server
             String endpoint = "test"; // Path WebSocket server
 
