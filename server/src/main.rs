@@ -1,62 +1,24 @@
-use std::collections::HashMap;
-use std::convert::Infallible;
-use std::sync::Arc;
-use tokio::sync::{mpsc, RwLock};
-use warp::{ws::Message, Filter, Rejection};
-
-mod handler;
-mod ws;
-
-type Result<T> = std::result::Result<T, Rejection>;
-type Clients = Arc<RwLock<HashMap<String, Client>>>; // Arc to share ownership
-
-#[derive(Debug, Clone)]
-pub struct Client {
-    pub user_id: usize,
-    pub topics: Vec<String>,
-    pub sender: Option<mpsc::UnboundedSender<std::result::Result<Message, warp::Error>>>,
-}
+mod client;
+use client::{Client, Clients};
 
 #[tokio::main]
 async fn main() {
-    let clients: Clients = Arc::new(RwLock::new(HashMap::new()));
+    let client_db: Clients = Clients::new();
+    client_db.add_usr("John".to_string()).await;
+    client_db.add_usr("Jane".to_string()).await;
 
-    let health_route = warp::path!("health").and_then(handler::health_handler);
+    print_client(&client_db, "John".to_string()).await;
+    print_client(&client_db, "Jane".to_string()).await;
 
-    let register = warp::path("register");
-    let register_routes = register
-        .and(warp::post()) // POST
-        .and(warp::body::json())
-        .and(with_clients(clients.clone()))
-        .and_then(handler::register_handler) // Use this ft as handler
-        .or(register // Or if /register/{id}
-            .and(warp::delete())
-            .and(warp::path::param())
-            .and(with_clients(clients.clone()))
-            .and_then(handler::unregister_handler));
-
-    let publish = warp::path!("publish")
-        .and(warp::body::json())
-        .and(with_clients(clients.clone()))
-        .and_then(handler::publish_handler);
-
-    let ws_route = warp::path("ws")
-        .and(warp::ws())
-        .and(warp::path::param())
-        .and(with_clients(clients.clone()))
-        .and_then(handler::ws_handler);
-
-    let routes = health_route
-        .or(register_routes)
-        .or(ws_route)
-        .or(publish)
-        .with(warp::cors().allow_any_origin());
-
-    println!("127.0.0.1:4242");
-    warp::serve(routes).run(([127, 0, 0, 1], 4242)).await;
+    client_db.remove_usr("John".to_string()).await;
+    print_client(&client_db, "John".to_string()).await;
 }
 
-fn with_clients(clients: Clients) -> impl Filter<Extract = (Clients,), Error = Infallible> + Clone {
-    // Ensure the client exists
-    warp::any().map(move || clients.clone())
+
+async fn print_client(clients: &Clients, name: String) {
+    let c: Option<Client> = clients.get_client(name).await;
+    match c {
+        Some(c) => println!("{:?}", c),
+        None => println!("No client found"),
+    }
 }
