@@ -30,13 +30,8 @@ public class MessagesData {
         return messages;
     }
 
-    public void addMessage(String message) {
-    messages.add(new Messages(message, "user"));
-        System.out.println("Message added");
-        for (Messages m : messages) {
-            System.out.println(m.getMessage());
-        }
+
+    public void addMessage(String m, String u) {
+        messages.add(new Messages(m, u));
     }
-
-
 }

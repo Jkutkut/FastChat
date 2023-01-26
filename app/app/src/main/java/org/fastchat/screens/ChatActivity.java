@@ -64,8 +64,10 @@ public class ChatActivity extends AppCompatActivity {
         ws.addListener(new WebSocketAdapter() {
             @Override
             public void onTextMessage(WebSocket websocket, String message) throws Exception{
-                System.out.println("Message: " + message);
-                messagesData.addMessage(parseJSON(message));
+                // Declare JSON object and parse it
+                JSONObject jsonObject = new JSONObject(message);
+                messagesData.addMessage(jsonObject.getString("msg"), jsonObject.getString("user"));
+                // Configure RecyclerView and notify adapter
                 layoutManager.smoothScrollToPosition(rvMessages, null, messagesData.getMessages().size() - 1);
                 messagesAdapter.notifyItemInserted(messagesData.getMessages().size() - 1);
             }
