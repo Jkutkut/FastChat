@@ -55,12 +55,16 @@
         <Button
             android:id="@+id/btnSendMsg"
             android:layout_width="match_parent"
-            app:backgroundTint="#09a984"
-            android:drawableEnd="@drawable/baseline_send_24"
-            android:background="@drawable/msg_bar_send"
             android:layout_height="match_parent"
             android:layout_marginStart="8dp"
-            android:layout_weight="9.5" />
+            android:layout_weight="9"
+            android:gravity="center_horizontal"
+            android:paddingStart="20dp"
+            android:background="@drawable/msg_bar_send"
+            android:isScrollContainer="false"
+            app:backgroundTint="#09a984"
+            app:icon="@drawable/baseline_send_24" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
