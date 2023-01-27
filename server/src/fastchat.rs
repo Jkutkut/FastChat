@@ -2,7 +2,7 @@ use std::convert::Infallible;
 // use tokio::sync::{mpsc, RwLock};
 use serde::{Deserialize, Serialize};
 use warp::{Filter, /*Rejection,*/ Reply};
-use warp::{/*http::StatusCode,*/ reply::json};
+use warp::{http::StatusCode, reply::json};
 
 
 use crate::client::{Clients, Client};
@@ -21,15 +21,23 @@ pub async fn launch_server(port: u16) {
     //     .and(with_clients(client_db.clone()))
     //     .and_then(ws_handler);
     // TODO implement other routes
-    // add
+    // add, remove
     // {name: "test"}
-    let add_usr = warp::path!("add")
+    let add_usr = warp::path!("add_usr")
+        .and(warp::post())
         .and(warp::body::json())
         .and(with_clients(client_db.clone()))
         .and_then(add_handler);
 
+    let remove_usr = warp::path!("remove_usr")
+        .and(warp::delete())
+        .and(warp::body::json())
+        .and(with_clients(client_db.clone()))
+        .and_then(remove_handler);
+
     let routes = 
         add_usr
+        .or(remove_usr)
         // ws_route
         .with(warp::cors().allow_any_origin());
 
@@ -59,13 +67,19 @@ fn with_clients(clients: Clients) -> impl Filter<Extract = (Clients,), Error = I
 async fn print_client(clients: &Clients, name: String) {
     let c: Option<Client> = clients.get_usr(name).await;
     match c {
-        Some(c) => println!("{:?}", c),
-        None => println!("No client found"),
+        Some(c) => {
+            println!("{:?}", c);
+            println!("Total clients: {}", clients.size().await)
+        },
+        None => {
+            println!("No client found");
+            println!("Total clients: {}", clients.size().await)
+        }
     }
 }
 
 #[derive(Deserialize)]
-struct AddRequest {
+struct NameRequest {
     name: String,
 }
 
@@ -74,7 +88,7 @@ struct AddResponse {
     uuid: String,
 }
 
-async fn add_handler(body: AddRequest, clients: Clients) -> Result<impl Reply, warp::Rejection> {
+async fn add_handler(body: NameRequest, clients: Clients) -> Result<impl Reply, warp::Rejection> {
     let name: String = body.name;
 
     clients.add_usr(name.clone()).await; // TODO: check if user already exists
@@ -85,4 +99,11 @@ async fn add_handler(body: AddRequest, clients: Clients) -> Result<impl Reply, w
         })),
         None => Err(warp::reject::not_found()),
     }
+}
+
+async fn remove_handler(body: NameRequest, clients: Clients) -> Result<impl Reply, warp::Rejection> {
+    let name: String = body.name;
+    clients.remove_usr(name.clone()).await;
+    print_client(&clients, name.clone()).await;
+    Ok(StatusCode::OK)
 }

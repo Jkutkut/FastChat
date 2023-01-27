@@ -42,6 +42,10 @@ impl Clients {
         None
     }
 
+    pub async fn size(&self) -> usize {
+        self.clients.read().await.len()
+    }
+
     pub async fn add_usr(&self, name: String) {
         let uuid = Uuid::new_v4().as_simple().to_string();
         let c: Client = Client {
