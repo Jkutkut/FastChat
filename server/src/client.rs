@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::sync::Arc; // Arc to share ownership
-use tokio::sync::RwLock;
+use tokio::sync::{mpsc, RwLock};
+use warp::{ws::Message};
 
 use uuid::Uuid;
 
@@ -10,11 +11,12 @@ pub struct Client {
     pub uuid: String,
     pub name: String,
     // pub topics: Vec<String>,
-    // pub sender: Option<mpsc::UnboundedSender<std::result::Result<Message, warp::Error>>>,
+    pub sender: Option<mpsc::UnboundedSender<std::result::Result<Message, warp::Error>>>,
 }
 
-type ClientsHM = Arc<RwLock<HashMap<String, Client>>>;
+type ClientsHM = Arc<RwLock<HashMap<String, Client>>>; // TODO implement with DB.
 
+#[derive(Debug, Clone)]
 pub struct Clients {
     clients: ClientsHM,
 }
@@ -26,8 +28,18 @@ impl Clients {
         }
     }
 
-    pub async fn get_client(&self, id: String) -> Option<Client> {
+    pub async fn get_usr(&self, id: String) -> Option<Client> {
         self.clients.read().await.get(&id).cloned()
+    }
+
+    pub async fn get_usr_by_uuid(&self, uuid: String) -> Option<Client> {
+        let clients = self.clients.read().await;
+        for (_, client) in clients.iter() {
+            if client.uuid == uuid {
+                return Some(client.clone());
+            }
+        }
+        None
     }
 
     pub async fn add_usr(&self, name: String) {
@@ -35,6 +47,7 @@ impl Clients {
         let c: Client = Client {
             uuid: uuid,
             name: name.clone(),
+            sender: None::<mpsc::UnboundedSender<std::result::Result<Message, warp::Error>>>,
         };
         self.clients.write().await.insert(name, c);
     }
