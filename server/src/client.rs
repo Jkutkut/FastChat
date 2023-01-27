@@ -14,6 +14,14 @@ pub struct Client {
     pub sender: Option<mpsc::UnboundedSender<std::result::Result<Message, warp::Error>>>,
 }
 
+impl Client {
+    pub async fn send_msg(&self, msg: String) {
+        if let Some(sender) = &self.sender {
+            let _ = sender.send(Ok(Message::text(msg)));
+        }
+    }
+}
+
 type ClientsHM = Arc<RwLock<HashMap<String, Client>>>; // TODO implement with DB.
 
 #[derive(Debug, Clone)]
@@ -58,5 +66,13 @@ impl Clients {
 
     pub async fn remove_usr(&self, name: String) {
         self.clients.write().await.remove(&name);
+    }
+
+    pub async fn broadcast_msg(&self, msg: String) {
+        let clients = self.clients.read().await;
+        for (_, client) in clients.iter() {
+            println!("Sending msg to {}...", client.name);
+            client.send_msg(msg.clone()).await;
+        }
     }
 }

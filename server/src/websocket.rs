@@ -1,9 +1,9 @@
 use futures::{FutureExt, StreamExt};
-// use serde::Deserialize;
-// use serde_json::from_str;
+use serde::{/*Deserialize,*/ Serialize};
+use serde_json::{json/*, from_str*/};
 use tokio::sync::mpsc;
 use tokio_stream::wrappers::UnboundedReceiverStream;
-use warp::ws::{/*Message,*/ WebSocket};
+use warp::ws::{Message, WebSocket};
 
 use crate::client::{Clients, Client};
 
@@ -31,10 +31,41 @@ pub async fn client_connection(ws: WebSocket, uuid: String, clients: Clients, mu
                 break;
             }
         };
-        // client_msg(&id, msg, &clients).await;
-        println!("received message from {}: {:?}", client.name, msg);
+        usr_msg(msg, &client, &clients).await;
     }
 
     println!("{} disconnected", client.name);
-    clients.remove_usr(client.name.clone());
+    clients.remove_usr(client.name.clone()).await;
+}
+
+
+#[derive(Serialize)]
+struct Msg {
+    user: String,
+    msg: String,
+}
+
+async fn usr_msg(message: Message, client: &Client, clients: &Clients) {
+    let msg = match message.to_str() {
+        Ok(v) => v,
+        Err(_) => return,
+    };
+    println!("- Message from \"{}\": {:?}\n\tuuid: {}", client.name, msg, client.uuid);
+
+    // Respond to the client
+    client.send_msg(
+        json!(&Msg {
+            user: client.name.clone(),
+            msg: msg.to_string(),
+        }).to_string()
+    ).await;
+
+    // For all clients, send the message
+    // TODO fix: broadcast will never end. Current client is mutex locked
+    // clients.broadcast_msg(
+    //     json!(&Msg {
+    //         user: client.name.clone(),
+    //         msg: msg.to_string(),
+    //     }).to_string()
+    // );
 }

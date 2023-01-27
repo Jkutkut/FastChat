@@ -56,8 +56,6 @@ fn with_clients(clients: Clients) -> impl Filter<Extract = (Clients,), Error = I
 }
 
 pub async fn ws_handler(ws: warp::ws::Ws, uuid: String, clients: Clients) -> Result<impl Reply, warp::Rejection> {
-    // TODO not working
-    print!("ws_handler: {}", uuid);
     let client = clients.get_usr_by_uuid(uuid.clone()).await;
     match client {
         Some(c) => Ok(ws.on_upgrade(move |socket| client_connection(socket, uuid, clients, c))),
