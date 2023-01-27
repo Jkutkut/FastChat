@@ -1,6 +1,6 @@
 mod client;
 mod fastchat;
-// mod websocket;
+mod websocket;
 
 #[tokio::main]
 async fn main() {

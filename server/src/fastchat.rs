@@ -6,7 +6,7 @@ use warp::{http::StatusCode, reply::json};
 
 
 use crate::client::{Clients, Client};
-// use crate::websocket::client_connection;
+use crate::websocket::client_connection;
 
 pub async fn launch_server(port: u16) {
     let client_db: Clients = Clients::new();
@@ -14,13 +14,13 @@ pub async fn launch_server(port: u16) {
     client_db.add_usr("test".to_string()).await;
     print_client(&client_db, "test".to_string()).await;
 
-    // Routes
-    // let ws_route = warp::path("ws")
-    //     .and(warp::ws())
-    //     .and(warp::path::param()) // uuid
-    //     .and(with_clients(client_db.clone()))
-    //     .and_then(ws_handler);
-    // TODO implement other routes
+    // ******* Routes *******
+    let ws_route = warp::path("ws")
+        .and(warp::ws())
+        .and(warp::path::param()) // uuid
+        .and(with_clients(client_db.clone()))
+        .and_then(ws_handler);
+
     // add, remove
     // {name: "test"}
     let add_usr = warp::path!("add_usr")
@@ -29,16 +29,17 @@ pub async fn launch_server(port: u16) {
         .and(with_clients(client_db.clone()))
         .and_then(add_handler);
 
-    let remove_usr = warp::path!("remove_usr")
+    let remove_usr = warp::path!("rm_usr")
         .and(warp::delete())
         .and(warp::body::json())
         .and(with_clients(client_db.clone()))
         .and_then(remove_handler);
+    // TODO implement other routes
 
-    let routes = 
-        add_usr
+
+    let routes = ws_route
+        .or(add_usr)
         .or(remove_usr)
-        // ws_route
         .with(warp::cors().allow_any_origin());
 
     println!("127.0.0.1:{port}");
@@ -54,15 +55,15 @@ fn with_clients(clients: Clients) -> impl Filter<Extract = (Clients,), Error = I
     warp::any().map(move || clients.clone())
 }
 
-// pub async fn ws_handler(ws: warp::ws::Ws, uuid: String, clients: Clients) -> Result<impl Reply> {
-//     // TODO not working
-//     print!("ws_handler: {}", uuid);
-//     let client = clients.get_usr_by_uuid(uuid).await;
-//     match client {
-//         Some(c) => Ok(ws.on_upgrade(move |socket| client_connection(socket, uuid, clients, c))),
-//         None => Err(warp::reject::not_found()),
-//     }
-// }
+pub async fn ws_handler(ws: warp::ws::Ws, uuid: String, clients: Clients) -> Result<impl Reply, warp::Rejection> {
+    // TODO not working
+    print!("ws_handler: {}", uuid);
+    let client = clients.get_usr_by_uuid(uuid.clone()).await;
+    match client {
+        Some(c) => Ok(ws.on_upgrade(move |socket| client_connection(socket, uuid, clients, c))),
+        None => Err(warp::reject::not_found()),
+    }
+}
 
 async fn print_client(clients: &Clients, name: String) {
     let c: Option<Client> = clients.get_usr(name).await;

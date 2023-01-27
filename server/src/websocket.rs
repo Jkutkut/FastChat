@@ -19,7 +19,6 @@ pub async fn client_connection(ws: WebSocket, uuid: String, clients: Clients, mu
     }));
 
     client.sender = Some(client_sender);
-    // clients.write().await.insert(uuid.clone(), client);
     
 
     println!("{} connected", client.name);
@@ -37,5 +36,5 @@ pub async fn client_connection(ws: WebSocket, uuid: String, clients: Clients, mu
     }
 
     println!("{} disconnected", client.name);
-    clients.remove_usr(&client.name);
+    clients.remove_usr(client.name.clone());
 }
