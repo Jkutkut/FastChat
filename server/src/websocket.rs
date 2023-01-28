@@ -19,9 +19,9 @@ pub async fn client_connection(ws: WebSocket, uuid: String, clients: Clients, mu
     }));
 
     client.sender = Some(client_sender);
-    
+    client = clients.update_usr(client.name.clone(), client).await.unwrap();
 
-    println!("{} connected", client.name);
+    println!("{} connected", &client.name);
 
     while let Some(result) = client_ws_rcv.next().await {
         let msg = match result {
@@ -34,7 +34,7 @@ pub async fn client_connection(ws: WebSocket, uuid: String, clients: Clients, mu
         usr_msg(msg, &client, &clients).await;
     }
 
-    println!("{} disconnected", client.name);
+    println!("{} disconnected", &client.name);
     clients.remove_usr(client.name.clone()).await;
 }
 
@@ -53,19 +53,19 @@ async fn usr_msg(message: Message, client: &Client, clients: &Clients) {
     println!("- Message from \"{}\": {:?}\n\tuuid: {}", client.name, msg, client.uuid);
 
     // Respond to the client
-    client.send_msg(
-        json!(&Msg {
-            user: client.name.clone(),
-            msg: msg.to_string(),
-        }).to_string()
-    ).await;
-
-    // For all clients, send the message
-    // TODO fix: broadcast will never end. Current client is mutex locked
-    // clients.broadcast_msg(
+    // client.send_msg(
     //     json!(&Msg {
     //         user: client.name.clone(),
     //         msg: msg.to_string(),
     //     }).to_string()
-    // );
+    // ).await;
+
+    // For all clients, send the message
+    clients.broadcast_msg(
+        json!(&Msg {
+            user: client.name.clone(),
+            msg: msg.to_string(),
+        }).to_string(),
+        client
+    ).await;
 }

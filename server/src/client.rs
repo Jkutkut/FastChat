@@ -10,23 +10,23 @@ use uuid::Uuid;
 pub struct Client {
     pub uuid: String,
     pub name: String,
-    // pub topics: Vec<String>,
+    // pub channels: Vec<String>,
     pub sender: Option<mpsc::UnboundedSender<std::result::Result<Message, warp::Error>>>,
 }
 
 impl Client {
-    pub async fn send_msg(&self, msg: String) {
+    pub fn send_msg(&self, msg: String) {
         if let Some(sender) = &self.sender {
             let _ = sender.send(Ok(Message::text(msg)));
         }
     }
 }
 
-type ClientsHM = Arc<RwLock<HashMap<String, Client>>>; // TODO implement with DB.
+// type ClientsHM = Arc<RwLock<HashMap<String, Client>>>; // TODO implement with DB.
 
 #[derive(Debug, Clone)]
 pub struct Clients {
-    clients: ClientsHM,
+    clients: Arc<RwLock<HashMap<String, Client>>>,
 }
 
 impl Clients {
@@ -64,15 +64,28 @@ impl Clients {
         self.clients.write().await.insert(name, c);
     }
 
+    pub async fn update_usr(&self, name: String, client: Client) -> Option<Client> {
+        self.clients.write().await.insert(name.clone(), client);
+        self.get_usr(name).await
+    }
+
     pub async fn remove_usr(&self, name: String) {
         self.clients.write().await.remove(&name);
     }
 
-    pub async fn broadcast_msg(&self, msg: String) {
-        let clients = self.clients.read().await;
-        for (_, client) in clients.iter() {
-            println!("Sending msg to {}...", client.name);
-            client.send_msg(msg.clone()).await;
-        }
+    pub async fn broadcast_msg(&self, msg: String, client: &Client) {
+        println!("Broadcasting message to all clients...");
+        println!("  - msg: {}", &msg);
+        println!("  - sender: {}", &client.name);
+
+        self.clients.read().await
+            .iter()
+            // .filter(|(_, c)| match c.sender {
+            //     Some(_) => c.uuid != client.uuid,
+            //     None => false,
+            // })
+            .for_each(|(_, c)| {
+                c.send_msg(msg.clone());
+            });
     }
 }
