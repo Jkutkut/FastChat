@@ -1,3 +1,17 @@
+.PHONY: server
+
+server:
+	docker build -t fastchat server
+
+run-server:
+	@#docker run --name fastchat -it -p 4242:4242 --rm fastchat
+	docker run --name fastchat -it --rm fastchat
+
+stop-server:
+	docker kill fastchat
+
+# ********* Server triggers *********
+
 UUID ?= $(shell bash -c 'read -p "uuid: " uuid; echo $$uuid')
 uwsc:
 	@#read -p "uuid: " r
