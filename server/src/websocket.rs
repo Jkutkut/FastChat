@@ -22,6 +22,17 @@ pub async fn client_connection(ws: WebSocket, uuid: String, clients: Clients, mu
     client = clients.update_usr(client.name.clone(), client).await.unwrap();
 
     println!("{} connected", &client.name);
+    clients.broadcast_msg(
+        json!(&Msg {
+            user: "Server".to_string(),
+            msg: format!("{} connected. {} users online.", client.name, clients.size().await),
+        }).to_string(),
+        &Client {
+            name: "Server".to_string(),
+            uuid: "".to_string(),
+            sender: None,
+        }
+    ).await;
 
     while let Some(result) = client_ws_rcv.next().await {
         let msg = match result {
@@ -36,6 +47,17 @@ pub async fn client_connection(ws: WebSocket, uuid: String, clients: Clients, mu
 
     println!("{} disconnected", &client.name);
     clients.remove_usr(client.name.clone()).await;
+    clients.broadcast_msg(
+        json!(&Msg {
+            user: "Server".to_string(),
+            msg: format!("{} disconnected. {} users online.", client.name, clients.size().await),
+        }).to_string(),
+        &Client {
+            name: "Server".to_string(),
+            uuid: "".to_string(),
+            sender: None,
+        }
+    ).await;
 }
 
 
