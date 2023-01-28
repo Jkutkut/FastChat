@@ -1,30 +1,20 @@
 package org.fastchat.screens;
 
+import android.os.Bundle;
+import android.os.StrictMode;
+import android.widget.Button;
+import android.widget.EditText;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Bundle;
-import android.os.StrictMode;
-import android.webkit.WebStorage;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-
-import com.neovisionaries.ws.client.HostnameUnverifiedException;
-import com.neovisionaries.ws.client.OpeningHandshakeException;
-import com.neovisionaries.ws.client.WebSocket;
-import com.neovisionaries.ws.client.WebSocketAdapter;
-import com.neovisionaries.ws.client.WebSocketException;
-import com.neovisionaries.ws.client.WebSocketFactory;
-
 import org.fastchat.R;
 import org.fastchat.models.MessagesData;
+import org.fastchat.utils.Connector;
 import org.fastchat.utils.MessagesAdapter;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.IOException;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -37,6 +27,7 @@ public class ChatActivity extends AppCompatActivity {
     RecyclerView.LayoutManager layoutManager;
     MessagesData messagesData;
 
+    private Connector mConnector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,37 +38,12 @@ public class ChatActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
 
         // Get data from MainActivity
-        String ip = getIntent().getStringExtra("ip");
-        String port = getIntent().getStringExtra("port");
-        String endpoint = getIntent().getStringExtra("endpoint");
+        // String ip = getIntent().getStringExtra("ip");
+        // String port = getIntent().getStringExtra("port");
+        // String endpoint = getIntent().getStringExtra("endpoint");
 
-        // Create a WebSocket
-        WebSocket ws;
-        try {
-            ws = new WebSocketFactory().createSocket("ws://" + ip + ":" + port + "/" + endpoint);
-        } catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
-            throw new RuntimeException(e);
-        }
-
-        // Create a listener
-        ws.addListener(new WebSocketAdapter() {
-            @Override
-            public void onTextMessage(WebSocket websocket, String message) throws Exception{
-                // Declare JSON object and parse it
-                JSONObject jsonObject = new JSONObject(message);
-                messagesData.addMessage(jsonObject.getString("msg"), jsonObject.getString("user"));
-                // Configure RecyclerView and notify adapter
-                layoutManager.smoothScrollToPosition(rvMessages, null, messagesData.getMessages().size() - 1);
-                messagesAdapter.notifyItemInserted(messagesData.getMessages().size() - 1);
-            }
-        });
-
-        try {
-            ws.connect();
-        } catch (WebSocketException e) {
-            System.out.println("Error: " + e.getMessage());
-        }
+        mConnector = new Connector("ws://192.168.1.135:4242/test", this);
+        mConnector.connect();
 
         // Declare elementsasd;
         etInputMessage = findViewById(R.id.etInputMessage);
@@ -95,25 +61,28 @@ public class ChatActivity extends AppCompatActivity {
 
         btnSendMsg.setOnClickListener(v -> {
             String message = etInputMessage.getText().toString();
-            ws.sendText(message);
-        });
 
+            if (!message.isEmpty()) {
+                mConnector.sendMessage(message);
+                etInputMessage.setText("");
+            }
+
+        });
     }
 
-    private String parseJSON(String message) {
+    public void onConnected() {
+        System.out.println("(TRACE) Connected");
+    }
+    public void onDisconnected() {
+        System.out.println("(TRACE) Disconnected");
+    }
+    public void onMessageReceived(String message) throws JSONException {
+        System.out.println("(TRACE) Msg recived: " + message);
+        JSONObject jsonObject = new JSONObject(message);
+        messagesData.addMessage(jsonObject.getString("msg"), jsonObject.getString("user"));
 
-        try {
-            JSONObject jsonObject = new JSONObject(message);
-            String username = jsonObject.getString("user");
-            String messageText = jsonObject.getString("msg");
-
-            return username + ": " + messageText;
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return null;
+        layoutManager.smoothScrollToPosition(rvMessages, null, messagesData.getMessages().size() - 1);
+        messagesAdapter.notifyItemInserted(messagesData.getMessages().size() - 1);
     }
 
 }
