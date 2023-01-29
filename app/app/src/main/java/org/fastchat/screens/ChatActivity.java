@@ -29,6 +29,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private Connector mConnector;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +59,7 @@ public class ChatActivity extends AppCompatActivity {
         rvMessages.setLayoutManager(layoutManager);
         rvMessages.setHasFixedSize(true);
         rvMessages.setAdapter(messagesAdapter);
+        getWindow().setBackgroundDrawableResource(R.drawable.whatsapp);
 
         btnSendMsg.setOnClickListener(v -> {
             String message = etInputMessage.getText().toString();
