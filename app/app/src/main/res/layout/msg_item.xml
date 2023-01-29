@@ -1,41 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"    android:id="@+id/msgItem"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@drawable/msg_style"
+    android:padding="8dp"
+    android:layout_margin="8dp"
+    android:layout_weight="1">
 
-    <FrameLayout
-        android:id="@+id/ll_msg_item"
-        android:layout_width="280dp"
+    <TextView
+        android:id="@+id/tvMsgItemName"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="8dp" >
+        android:text="@string/app_name"
+        android:textStyle="bold"
+        android:textColor="@color/chat_user"/>
 
-        <TextView
-            android:id="@+id/tvMsgItemContent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tu mensaje asdasdasdasda"
-            android:textColor="@color/chat_message"
-            android:textSize="16sp"
-            android:paddingTop="20dp"
-            android:paddingBottom="10dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:background="@drawable/msg_style" />
-
-        <TextView
-            android:id="@+id/tvMsgItemName"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="3dp"
-            android:paddingLeft="12dp"
-            android:textStyle="bold"
-            android:textColor="@color/chat_user"
-            android:textAllCaps="true"
-            android:text="Tu nombre aquí" />
-
-    </FrameLayout>
-
+    <TextView
+        android:id="@+id/tvMsgItemContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl sit amet ultricies lacinia, nisl nisl aliquet nisl, sit amet aliquet nisl nisl sit amet nisl."
+        android:textColor="@color/chat_message" />
 
 </LinearLayout>
