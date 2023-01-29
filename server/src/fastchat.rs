@@ -43,7 +43,7 @@ pub async fn launch_server(port: u16) {
         .with(warp::cors().allow_any_origin());
 
     println!("127.0.0.1:{port}");
-    warp::serve(routes).run(([127, 0, 0, 1], port)).await;
+    warp::serve(routes).run(([0, 0, 0, 0], port)).await;
 }
 
 fn with_clients(clients: Clients) -> impl Filter<Extract = (Clients,), Error = Infallible> + Clone {

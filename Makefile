@@ -4,8 +4,8 @@ server:
 	docker build -t fastchat server
 
 run-server:
-	@#docker run --name fastchat -it -p 4242:4242 --rm fastchat
-	docker run --name fastchat -it --rm fastchat
+	docker run --name fastchat -it -p 4242:4242 --rm fastchat
+	@#docker run --name fastchat -it --rm fastchat
 
 stop-server:
 	docker kill fastchat
@@ -23,6 +23,3 @@ addPepe:
 
 addPaco:
 	curl -X "POST" 'http://localhost:4242/add_usr' -H 'Content-Type: application/json' -d '{"name": "paco"}'
-
-rmPaco:
-	curl -X "DELETE" 'http://localhost:4242/rm_usr' -H 'Content-Type: application/json' -d '{"name": "paco"}'
