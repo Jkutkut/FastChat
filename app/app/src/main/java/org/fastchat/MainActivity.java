@@ -7,26 +7,27 @@ import android.os.Bundle;
 import android.widget.Button;
 
 import org.fastchat.screens.ChatActivity;
+import org.fastchat.screens.LoginActivity;
 
 public class MainActivity extends AppCompatActivity {
 
     // Declare elements here
-    Button btnGoToChatActivity;
+    Button btnLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        btnGoToChatActivity = findViewById(R.id.btnGoToChatActivity);
+        btnLogin = findViewById(R.id.btnLogin);
 
-        btnGoToChatActivity.setOnClickListener(v -> {
+        btnLogin.setOnClickListener(v -> {
 
             String ip = "192.168.1.135"; // IP WebSocket server
             String port = "4242"; // Port WebSocket server
             String endpoint = "test"; // Path WebSocket server
 
-            Intent intent = new Intent(MainActivity.this, ChatActivity.class);
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             intent.putExtra("ip", ip);
             intent.putExtra("port", port);
             intent.putExtra("endpoint", endpoint);

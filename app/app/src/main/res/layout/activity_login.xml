@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".screens.LoginActivity">
+
+        <io.github.florent37.shapeofview.shapes.ArcView
+            android:id="@+id/arcView"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:elevation="4dp"
+            android:backgroundTint="@color/black"
+            app:backgroundTint="#09a984"
+            app:shape_arc_height="20dp"
+            app:shape_arc_position="bottom">
+            
+            
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/background_pattern_world"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/app_name"
+                android:background="#09a984"
+                android:elevation="4dp"
+                />
+
+            <ImageView
+                android:layout_width="169dp"
+                android:layout_height="64dp"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/app_name"
+                android:elevation="4dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/whatsaplogo" />
+
+        </io.github.florent37.shapeofview.shapes.ArcView>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:text="Bienvenido"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="22sp"
+        android:textStyle="bold"/>
+
+</RelativeLayout>
