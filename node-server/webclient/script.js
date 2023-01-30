@@ -1,5 +1,5 @@
 //Websocekt variables
-const url = `ws://${window.location.hostname}:4242/myWebsocket`
+const url = `ws://${window.location.hostname}:4242/ws/` // TODO fill
 
 window.addEventListener('load', () => {
     const mywsServer = new WebSocket(url);

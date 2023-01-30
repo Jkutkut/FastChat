@@ -42,3 +42,9 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# Vim
+*.swp
+
+# Cargo
+target/
