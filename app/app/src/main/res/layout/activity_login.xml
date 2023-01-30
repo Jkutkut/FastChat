@@ -63,8 +63,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="8dp"
-            android:text="Enter your data please....."
-            android:textColor="#797878"
+            android:textStyle="bold"
+            android:text="Enter your email and password for login"
+            android:textColor="#424243"
             android:textSize="20sp" />
 
         <LinearLayout
@@ -79,8 +80,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="8dp"
-                android:text="Phone Number"
-                android:textColor="#d0d0d0"
+                android:text="Email"
+                android:textColor="#bebfbe"
                 android:textSize="16sp" />
 
             <EditText
@@ -90,11 +91,11 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:hint="Enter your phone number"
+                android:hint="example@mail.com"
                 android:inputType="textEmailAddress"
                 android:padding="8dp"
                 android:textColor="@color/black"
-                android:textColorHint="@color/black" />
+                android:textColorHint="#646565" />
 
             <TextView
                 android:id="@+id/tvPassword"
@@ -102,8 +103,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="8dp"
-                android:text="Phone Number"
-                android:textColor="#d0d0d0"
+                android:text="Password"
+                android:textColor="#bebfbe"
                 android:textSize="16sp" />
 
             <EditText
@@ -113,11 +114,11 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:hint="Enter your phone number"
+                android:hint="***************"
                 android:inputType="textPassword"
                 android:padding="8dp"
                 android:textColor="@color/black"
-                android:textColorHint="@color/black" />
+                android:textColorHint="#646565" />
 
         </LinearLayout>
 
