@@ -1,38 +1,27 @@
 # FastChat
 
-## Tutorial:
-To communicate with websockets, use the endpoint: `ws://localhost:4242/ws/{uuid}`. The uuid is unique for each user.
+## Index:
+- [FastChat](#fastchat)
+  - [Index:](#index)
+  - [Technologies used:](#technologies-used)
+  - [Documentation:](#documentation)
+    - [Docker usage:](#docker-usage)
+  - [Special thanks:](#special-thanks)
 
-## Tools used:
+## Technologies used:
 - **Android Studio**: To build the Android app.
 - **Rust**: To build the server.
 - **Docker**: To be able to run the server on any machine.
 - **Makefile**: To automate the processes.
 
-## Docker build server:
-Builds the server image. Only needs to be run once.
-```bash
-make server
-```
+## Documentation:
+All the documentation related to the communication between the server and the client can be found in the [communication-api.md](./docs/communication-api.md) file.
 
-## Docker run server:
-Runs the server on localhost.
-```bash
-make run-server
-```
+### Docker usage:
+All the documentation related to the docker usage can be found in the [docker.md](./docs/docker.md) file.
 
-## Docker stop server:
-Stops the current running server.
-```bash
-make stop-server
-```
 
-## Debug functions:
-### Add user:
-```bash
-make addPaco
-```
+## Special thanks:
+We would like to thank all the open resources we learnt from doing this project.
 
-```bash
-make addPepe
-```
+- Rust websocket example: [link](https://blog.logrocket.com/how-to-build-a-websocket-server-with-rust/)
