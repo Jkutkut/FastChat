@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
             String port = "4242"; // Port WebSocket server
             String endpoint = "test"; // Path WebSocket server
 
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            Intent intent = new Intent(MainActivity.this, ChatActivity.class);
             intent.putExtra("ip", ip);
             intent.putExtra("port", port);
             intent.putExtra("endpoint", endpoint);
