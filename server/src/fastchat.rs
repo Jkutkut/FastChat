@@ -1,14 +1,9 @@
 use std::convert::Infallible;
 // use tokio::sync::{mpsc, RwLock};
-// use serde::{Deserialize, Serialize};
-use warp::{Filter, /*Rejection,*/ Reply};
-use warp::{/*http::StatusCode,*/ reply::json};
+use warp::Filter;
 
-
-use crate::client::{Clients/*, Client*/};
-use crate::websocket::client_connection;
-use crate::routes::{add_handler, print_client};
-
+use crate::client::{Clients};
+use crate::routes::{add_handler, print_client, ws_handler};
 
 pub async fn launch_server(port: u16) {
     let client_db: Clients = Clients::new();
@@ -49,12 +44,4 @@ fn with_clients(clients: Clients) -> impl Filter<Extract = (Clients,), Error = I
     // reference to variables captured by value.
     // TODO check if this code can be called just once
     warp::any().map(move || clients.clone())
-}
-
-pub async fn ws_handler(ws: warp::ws::Ws, uuid: String, clients: Clients) -> Result<impl Reply, warp::Rejection> {
-    let client = clients.get_usr_by_uuid(uuid.clone()).await;
-    match client {
-        Some(c) => Ok(ws.on_upgrade(move |socket| client_connection(socket, uuid, clients, c))),
-        None => Err(warp::reject::not_found()),
-    }
 }

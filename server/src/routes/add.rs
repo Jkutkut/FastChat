@@ -1,16 +1,12 @@
-// use std::convert::Infallible;
-// // use tokio::sync::{mpsc, RwLock};
 use serde::{Deserialize, Serialize};
-use warp::{Filter, /*Rejection,*/ Reply};
-use warp::{/*http::StatusCode,*/ reply::json};
+use warp::{Reply, reply::json};
 
 use crate::client::{Clients, Client};
-// use crate::websocket::client_connection;
 
 #[derive(Deserialize)]
 pub struct AddRequest {
     name: String,
-    password: String
+    // password: String // TODO
 }
 
 #[derive(Serialize)]
