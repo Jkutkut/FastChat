@@ -19,7 +19,6 @@ pub async fn launch_server(port: u16) {
         .and_then(ws_handler);
 
     // add, remove
-    // {name: "test"}
     let add_usr = warp::path!("add_usr")
         .and(warp::post())
         .and(warp::body::json())
@@ -27,7 +26,6 @@ pub async fn launch_server(port: u16) {
         .and_then(add_handler);
 
     // TODO implement other routes
-
 
     let routes = ws_route
         .or(add_usr)
