@@ -8,6 +8,7 @@ npm-debug.log
 # Secrets
 .secret*
 .env
+.env*
 
 # Gradle files
 .gradle/
