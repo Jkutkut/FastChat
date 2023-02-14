@@ -44,10 +44,10 @@ askData "DB_USR" "fast_chat_admin"; DB_USR="$data";
 askPassword "$DB_USR"; DB_USR_PASSWD="$PASSWD";
 
 echo "
-DB_NAME='$DB_NAME'
-DB_PORT='$DB_PORT'
-DB_USR='$DB_USR'
-DB_USR_PASSWD='$DB_USR_PASSWD'
+DB_NAME=$DB_NAME
+DB_PORT=$DB_PORT
+DB_USR=$DB_USR
+DB_USR_PASSWD=$DB_USR_PASSWD
 " > $SECRET_FILE
 echo "Done!"
 echo
